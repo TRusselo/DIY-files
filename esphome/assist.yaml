@@ -1,12 +1,16 @@
+###### MAKE CHANGES HERE ######
 substitutions:
-  devicename: mbr-ble
-  friendly_device_name: mbr
+  devicename: assist-01
+  friendly_device_name: Assistant
   boardtype: nodemcu-32s
   ws_lrclk: GPIO14
   sck_bclk: GPIO27
   mic_din: GPIO26
   spk_dout: GPIO13
   led_data: GPIO32
+  diag_btn: GPIO39
+
+###### NO CHANGES NEEDED BELOW ######
 
 esphome:
   name: $devicename
@@ -45,7 +49,7 @@ wifi:
     subnet: 255.255.255.0
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "MBR-Esp-Ble Fallback Hotspot"
+    ssid: "${devicename} Fallback Hotspot"
     password: !secret wifi_password
 
 improv_serial:
@@ -169,7 +173,7 @@ binary_sensor:
             - voice_assistant.stop:
   - platform: gpio
     pin:
-      number: GPIO39
+      number: $diag_btn
       inverted: true
     name: Button
     disabled_by_default: true
