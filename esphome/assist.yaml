@@ -2,6 +2,8 @@
 substitutions:
   devicename: assist-01
   friendly_device_name: Assistant
+  ip_address: 192.168.1.21 #UNCOMMENT MANUAL IP SECTION OF WIFI CONFIG
+  gateway: 19.168.1.254
   boardtype: nodemcu-32s
   ws_lrclk: GPIO14
   sck_bclk: GPIO27
@@ -10,19 +12,33 @@ substitutions:
   led_data: GPIO32
   diag_btn: GPIO39
 
-###### NO CHANGES NEEDED BELOW ######
-
 esphome:
   name: $devicename
   friendly_name: $friendly_device_name
-
-
 
 esp32:
   board: $boardtype
   framework:
     type: esp-idf
     # type: arduino
+
+wifi:
+  on_connect:
+    - delay: 5s # Gives time for improv results to be transmitted
+    - ble.disable:
+  on_disconnect:
+    - ble.enable:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # manual_ip:  # UNCOMMENT THESE 4 LINES FOR MANUAL IP CONFIG
+  #   static_ip: $ip_address
+  #   gateway: $gateway
+  #   subnet: 255.255.255.0
+  ap:  # Enable fallback hotspot (captive portal) in case wifi connection fails
+    ssid: "${devicename} Fallback Hotspot"
+    password: !secret wifi_password
+
+captive_portal:
 
 # Enable logging
 logger:
@@ -34,23 +50,6 @@ api:
 
 ota:
   password: "ba7bdcf32bd2087bdac5fac40f9403d5"
-
-wifi:
-  on_connect:
-    - delay: 5s # Gives time for improv results to be transmitted
-    - ble.disable:
-  on_disconnect:
-    - ble.enable:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  manual_ip:
-    static_ip: 192.168.1.21
-    gateway: 192.168.1.254
-    subnet: 255.255.255.0
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "${devicename} Fallback Hotspot"
-    password: !secret wifi_password
 
 improv_serial:
 
